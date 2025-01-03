@@ -33,3 +33,5 @@
 .cache
 build
 build-Xcode
+.idea
+cmake-build-*

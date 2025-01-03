@@ -3,16 +3,9 @@
 //
 #include "auth.hpp"
 
-// Authentication utilities
-bool is_user_authenticated(const std::string &username, const std::string &password) {
-  return username == "frank" && password == "frank";
-}
-
-bool is_bearer_authenticated(const std::string &beaerer) {
-  return beaerer == "123456";
-}
-
-static bool validate_authentication(const crow::request &request, crow::response &response) {
+bool validate_authentication(const crow::request &request,
+                             crow::response &response,
+                             IAuthenticate* p_auth_delegate) {
   std::string myauth = request.get_header_value("Authorization");
   if (myauth.empty()) {
     response.code = crow::status::UNAUTHORIZED;
@@ -20,7 +13,7 @@ static bool validate_authentication(const crow::request &request, crow::response
                         "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"");
     return false;
   }
-  if (myauth.find("Basic ") != std::string::npos) {
+  if (myauth.find("Basic ") == 0) {
     // Cut off starting "Basic "
     std::string mycreds = myauth.substr(6);
     // decode base64
@@ -37,7 +30,7 @@ static bool validate_authentication(const crow::request &request, crow::response
     } else {
       std::string username = d_mycreds.substr(0, found);
       std::string password = d_mycreds.substr(found + 1);
-      if (is_user_authenticated(username, password)) {
+      if (p_auth_delegate !=nullptr && p_auth_delegate->is_user_authenticated(username, password)) {
         return true;
       } else {
         response.code = crow::status::UNAUTHORIZED;
@@ -46,10 +39,10 @@ static bool validate_authentication(const crow::request &request, crow::response
         return false;
       }
     }
-  } else if (myauth.find("Bearer ") != std::string::npos) {
+  } else if (myauth.find("Bearer ") == 0) {
     // Cut off starting "Bearer "
     std::string bearer = myauth.substr(7);
-    if (is_bearer_authenticated(bearer)) {
+    if (p_auth_delegate != nullptr && p_auth_delegate->is_bearer_authenticated(bearer)) {
       return true;
     } else {
       response.code = crow::status::UNAUTHORIZED;
@@ -65,17 +58,18 @@ static bool validate_authentication(const crow::request &request, crow::response
   }
 }
 
-void LoginRequiredMiddleware::before_handle(crow::request &req,
+
+void LoginRequiredMiddlewareBase::before_handle(crow::request &req,
                                             crow::response &res,
-                                            context &/*ctx*/) const
-{
+                                            LoginRequiredMiddlewareBase::context &ctx) const {
   CROW_LOG_DEBUG << "check auth for " << req.url;
-  if (!validate_authentication(req, res)) {
+  if (!validate_authentication(req, res, p_auth_delegate.get())) {
     res.end();
   }
 }
 
-void LoginRequiredMiddleware::after_handle(crow::request &/*req*/,
+
+void LoginRequiredMiddlewareBase::after_handle(crow::request &/*req*/,
                                            crow::response &/*res*/,
-                                           context &/*ctx*/) const
-{}
+                                           context &/*ctx*/) const {
+}

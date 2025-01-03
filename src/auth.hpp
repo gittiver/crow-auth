@@ -8,20 +8,34 @@
 #include <crow/middleware.h>
 #include <crow/http_response.h>
 
-#include <optional>
+#include <string>
 
-struct AuthContext {
-  std::optional<std::string> username;
+/** interface of Authentication implementations */
+struct IAuthenticate {
+  virtual ~IAuthenticate() = default;
+  virtual bool is_user_authenticated(const std::string &username, const std::string &password) = 0;
+  virtual bool is_bearer_authenticated(const std::string &bearer) = 0;
 };
-struct LoginRequiredMiddleware : crow::ILocalMiddleware {
-  using context = AuthContext;
+
+struct LoginRequiredMiddlewareBase :  crow::ILocalMiddleware {
+  struct context {
+  };
+
+  LoginRequiredMiddlewareBase(): p_auth_delegate() {};
+  explicit LoginRequiredMiddlewareBase(std::unique_ptr<IAuthenticate> auth_delegate) {
+    p_auth_delegate = std::move(auth_delegate);
+  }
+
+  virtual ~LoginRequiredMiddlewareBase() = default;
 
   void before_handle(crow::request &req, crow::response &res, context &ctx) const;
 
   void after_handle(crow::request &req, crow::response &res, context &ctx) const;
+
+  std::unique_ptr<IAuthenticate> p_auth_delegate;
 };
 
-#define CROW_LOGIN_REQUIRED(app) CROW_MIDDLEWARES(app, LoginRequiredMiddleware)
+#define CROW_LOGIN_REQUIRED(app) CROW_MIDDLEWARES(app, LoginRequiredMiddlewareBase)
 
 // End of Authentication utilities
 
