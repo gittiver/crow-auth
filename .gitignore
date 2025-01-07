@@ -33,5 +33,7 @@
 .cache
 build
 build-Xcode
+/.vs
+/vcpkg_installed
 .idea
 cmake-build-*
