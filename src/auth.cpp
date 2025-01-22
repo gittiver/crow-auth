@@ -3,7 +3,7 @@
 //
 #include "auth.hpp"
 
-bool validate_authentication(const crow::request &request,
+static bool validate_authentication(const crow::request &request,
                              crow::response &response,
                              IAuthenticate* p_auth_delegate) {
   std::string myauth = request.get_header_value("Authorization");
@@ -59,9 +59,9 @@ bool validate_authentication(const crow::request &request,
 }
 
 
-void LoginRequiredMiddlewareBase::before_handle(crow::request &req,
+void LoginRequiredMiddleware::before_handle(crow::request &req,
                                             crow::response &res,
-                                            LoginRequiredMiddlewareBase::context &ctx) const {
+                                            LoginRequiredMiddleware::context &ctx) const {
   CROW_LOG_DEBUG << "check auth for " << req.url;
   if (!validate_authentication(req, res, p_auth_delegate.get())) {
     res.end();
@@ -69,7 +69,7 @@ void LoginRequiredMiddlewareBase::before_handle(crow::request &req,
 }
 
 
-void LoginRequiredMiddlewareBase::after_handle(crow::request &/*req*/,
+void LoginRequiredMiddleware::after_handle(crow::request &/*req*/,
                                            crow::response &/*res*/,
                                            context &/*ctx*/) const {
 }

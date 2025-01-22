@@ -45,7 +45,8 @@ add_library(lib-${PROJECT_NAME}
   src/bp_user_registration.hpp
   src/auth.cpp
   src/auth.hpp
-)
+  src/auth_user.hpp
+  src/auth_user.cpp)
 target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow)
 
 add_executable(${PROJECT_NAME} src/main.cpp)

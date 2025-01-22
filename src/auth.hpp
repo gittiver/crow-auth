@@ -17,16 +17,16 @@ struct IAuthenticate {
   virtual bool is_bearer_authenticated(const std::string &bearer) = 0;
 };
 
-struct LoginRequiredMiddlewareBase :  crow::ILocalMiddleware {
+struct LoginRequiredMiddleware :  crow::ILocalMiddleware {
   struct context {
   };
 
-  LoginRequiredMiddlewareBase(): p_auth_delegate() {};
-  explicit LoginRequiredMiddlewareBase(std::unique_ptr<IAuthenticate> auth_delegate) {
+  LoginRequiredMiddleware(): p_auth_delegate() {};
+  explicit LoginRequiredMiddleware(std::unique_ptr<IAuthenticate> auth_delegate) {
     p_auth_delegate = std::move(auth_delegate);
   }
 
-  virtual ~LoginRequiredMiddlewareBase() = default;
+  virtual ~LoginRequiredMiddleware() = default;
 
   void before_handle(crow::request &req, crow::response &res, context &ctx) const;
 
@@ -35,7 +35,7 @@ struct LoginRequiredMiddlewareBase :  crow::ILocalMiddleware {
   std::unique_ptr<IAuthenticate> p_auth_delegate;
 };
 
-#define CROW_LOGIN_REQUIRED(app) CROW_MIDDLEWARES(app, LoginRequiredMiddlewareBase)
+#define CROW_LOGIN_REQUIRED(app) CROW_MIDDLEWARES(app, LoginRequiredMiddleware)
 
 // End of Authentication utilities
 

@@ -6,8 +6,7 @@
 #include "auth.hpp"
 #include "bp_user_registration.hpp"
 
-
-crow::json::wvalue error2json(const std::string &errstring) {
+static crow::json::wvalue error2json(const std::string &errstring) {
   crow::json::wvalue r;
   r["error"] = errstring;
   return r;
@@ -20,13 +19,11 @@ class SimpleAuth : public IAuthenticate {
 
   bool is_bearer_authenticated(const std::string &bearer) override
   { return true; };
-
-
 };
 
 int main() {
-  crow::App<LoginRequiredMiddlewareBase> app;
-  app.get_middleware<LoginRequiredMiddlewareBase>().p_auth_delegate = std::make_unique<SimpleAuth>();
+  crow::App<LoginRequiredMiddleware> app;
+  app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::make_unique<SimpleAuth>();
 
   CROW_ROUTE(app, "/api/do_authenticated")
       .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
