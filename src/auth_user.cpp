@@ -1,6 +1,8 @@
 #include "auth_user.hpp"
 #include <memory>
 #include <openssl/blowfish.h>
+#include "bcrypt/BCrypt.hpp"
+
 UserDb& UserDb::get()
 {
 	static UserDb instance;

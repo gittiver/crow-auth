@@ -8,6 +8,7 @@ enable_testing()
 
 set(TEST_SRCS
   unittest.cpp
+  user_auth_test.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})

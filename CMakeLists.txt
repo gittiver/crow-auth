@@ -18,7 +18,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
-option(${PROJECT_NAME}_ENABLE_TESTS "enable testing" OFF)
+option(CROW_AUTH_ENABLE_TESTS "enable testing" OFF)
 
 CPMAddPackage(Crow
   VERSION 1.2.0
@@ -40,6 +40,13 @@ CPMAddPackage(expected
   "EXPECTED_BUILD_TESTS Off"
 )
 
+CPMAddPackage(bcrypt
+  GIT_TAG master
+  GITHUB_REPOSITORY trusch/libbcrypt
+)
+message( "added ${CPM_LAST_PACKAGE_NAME}")
+message( "src=  ${bcrypt_SOURCE_DIR}")
+
 add_library(lib-${PROJECT_NAME}
   src/bp_user_registration.cpp
   src/bp_user_registration.hpp
@@ -47,17 +54,19 @@ add_library(lib-${PROJECT_NAME}
   src/auth.hpp
   src/auth_user.hpp
   src/auth_user.cpp)
-target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow)
-
+target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow bcrypt)
+target_include_directories(lib-${PROJECT_NAME} PRIVATE ${bcrypt_SOURCE_DIR}/include)
+target_link_directories(lib-${PROJECT_NAME} PUBLIC ${bcrypt_BINARY_DIR})
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         lib-${PROJECT_NAME}
-        )
+)
 target_include_directories(${PROJECT_NAME} PRIVATE ${expected_SOURCE_DIR}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${bcrypt_BINARY_DIR})
 
 include(CTest)
-if(${${PROJECT_NAME}_ENABLE_TESTS})
+if(${CROW_AUTH_ENABLE_TESTS})
 
   enable_testing()
 
