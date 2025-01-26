@@ -18,7 +18,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 
-option(CROW_AUTH_ENABLE_TESTS "enable testing" OFF)
+option(CROW_AUTH_ENABLE_TESTS "enable testing" ON)
 
 CPMAddPackage(Crow
   VERSION 1.2.0
