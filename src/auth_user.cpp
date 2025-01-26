@@ -3,6 +3,16 @@
 #include <openssl/blowfish.h>
 #include "bcrypt/BCrypt.hpp"
 
+
+User& User::password(const std::string& password)
+{
+	salted_password_hash_ = BCrypt::generateHash(password);
+	return *this;
+}
+
+bool User::validate_password(const std::string& password) const {
+	return BCrypt::validatePassword(password, salted_password_hash_);
+}
 UserDb& UserDb::get()
 {
 	static UserDb instance;
