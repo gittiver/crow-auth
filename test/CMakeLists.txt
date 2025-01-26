@@ -12,6 +12,6 @@ set(TEST_SRCS
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest Crow::Crow Catch2::Catch2WithMain)
+target_link_libraries(unittest lib-crow-auth Catch2::Catch2WithMain)
 
 add_test(NAME unittest COMMAND unittest)

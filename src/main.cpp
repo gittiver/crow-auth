@@ -34,7 +34,7 @@ int main() {
             return crow::response(crow::status::OK);
           });
 
-  bp_user_registration user_registration;
+  bp_user_registration user_registration(app);
   app.register_blueprint(user_registration);
   app.port(18080).run();
 

@@ -3,8 +3,9 @@
 //
 
 #include "bp_user_registration.hpp"
+#include "auth.hpp"
 
-bp_user_registration::bp_user_registration()
+bp_user_registration::bp_user_registration(const crow::App<LoginRequiredMiddleware>& app)
     : crow::Blueprint("user") {
 
 CROW_BP_ROUTE((*this), "/api/register")
@@ -14,7 +15,26 @@ CROW_BP_ROUTE((*this), "/api/register")
         return crow::response(crow::status::OK);
       });
 
+CROW_BP_ROUTE((*this), "/api/logout")
+  .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
+  ([]() {
+        // ...
+        return crow::response(crow::status::OK);
+      });
+
 CROW_BP_ROUTE((*this), "/api/profile/<int>")
+  .methods(crow::HTTPMethod::Get)
+  .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
+
+      ([](int /*id*/) {
+        //...
+        return crow::response(crow::status::OK);
+      });
+
+CROW_BP_ROUTE((*this), "/api/profile/<int>")
+  .methods(crow::HTTPMethod::Post)
+  .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
+
       ([](int /*id*/) {
         //...
         return crow::response(crow::status::OK);
@@ -37,7 +57,8 @@ CROW_BP_ROUTE((*this), "/register")
       });
 
 CROW_BP_ROUTE((*this), "/profile/<int>")
-([](int /*id*/) {
+  .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
+  ([](int /*id*/) {
             //...
             return crow::response(crow::status::OK);
           });
