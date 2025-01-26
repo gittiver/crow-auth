@@ -69,6 +69,14 @@ target_link_libraries(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${expected_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${bcrypt_BINARY_DIR})
 
+add_executable(example_auth_db src/example_auth_db.cpp)
+target_link_libraries(example_auth_db
+        PRIVATE
+        lib-${PROJECT_NAME}
+)
+target_include_directories(example_auth_db PRIVATE ${expected_SOURCE_DIR}/include)
+target_link_directories(example_auth_db PRIVATE ${bcrypt_BINARY_DIR})
+
 include(CTest)
 if(${CROW_AUTH_ENABLE_TESTS})
 

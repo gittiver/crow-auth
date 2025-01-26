@@ -15,6 +15,7 @@ struct IAuthenticate {
   virtual ~IAuthenticate() = default;
   virtual bool is_user_authenticated(const std::string &username, const std::string &password) = 0;
   virtual bool is_bearer_authenticated(const std::string &bearer) = 0;
+  virtual void on_init() = 0 ;
 };
 
 struct LoginRequiredMiddleware :  crow::ILocalMiddleware {

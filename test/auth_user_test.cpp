@@ -88,16 +88,16 @@ TEST_CASE("user validate password")
 
 TEST_CASE("userdb create")
 {
-  UserDb& user_db=UserDb::get();
+  AuthDb& user_db=AuthDb::get();
 }
 
 TEST_CASE("userdb add_user")
 {
-  UserDb& user_db=UserDb::get();
+  AuthDb& user_db=AuthDb::get();
   User new_user;
   new_user.id("tester").password("tester_password");
   auto result = user_db.add_user(new_user);
-  REQUIRE(result.error() == UserDb::eUserDbResult::OK);
+  REQUIRE(result.error() == AuthDb::eAuthDbResult::OK);
   auto get_new_user = user_db.getUser("tester");
 
   REQUIRE(get_new_user->id()=="tester");
@@ -106,25 +106,25 @@ TEST_CASE("userdb add_user")
 
 TEST_CASE("userdb get_user")
 {
-  UserDb& user_db=UserDb::get();
+  AuthDb& user_db=AuthDb::get();
   auto user = user_db.getUser("tester");
   REQUIRE(user==nullptr);
 }
 
 TEST_CASE("userdb del_user")
 {
-  UserDb& user_db=UserDb::get();
+  AuthDb& user_db=AuthDb::get();
   User new_user;
   new_user.id("tester").password("tester_password");
   user_db.add_user(new_user);
 
   // bas case: delete not existing
   auto result = user_db.delete_user("not_existing");
-  REQUIRE(result == UserDb::eUserDbResult::NOT_FOUND);
+  REQUIRE(result == AuthDb::eAuthDbResult::NOT_FOUND);
 
   // good case: delete previously added
   result = user_db.delete_user("tester");
-  REQUIRE(result == UserDb::eUserDbResult::OK);
+  REQUIRE(result == AuthDb::eAuthDbResult::OK);
 }
 
 TEST_CASE("userdb validate user(name)")
