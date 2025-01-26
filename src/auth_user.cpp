@@ -24,3 +24,11 @@ std::shared_ptr<User> UserDb::getUser(const std::string& name)
 	// TODO create useful user object	
 	return std::shared_ptr<User>();
 }
+
+tl::expected<User*,UserDb::eUserDbResult> UserDb::add_user(User& user) {
+	return tl::make_unexpected(UserDb::eUserDbResult::NOT_VALID);
+}
+
+UserDb::eUserDbResult UserDb::delete_user(const std::string& user_id) {
+	return UserDb::eUserDbResult::NOT_FOUND;
+}

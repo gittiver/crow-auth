@@ -54,9 +54,13 @@ add_library(lib-${PROJECT_NAME}
   src/auth.hpp
   src/auth_user.hpp
   src/auth_user.cpp)
+target_include_directories(
+        lib-${PROJECT_NAME}
+        PUBLIC ${CMAKE_SOURCE_DIR}/src
+        PRIVATE ${bcrypt_SOURCE_DIR}/include)
 target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow bcrypt)
-target_include_directories(lib-${PROJECT_NAME} PRIVATE ${bcrypt_SOURCE_DIR}/include)
 target_link_directories(lib-${PROJECT_NAME} PUBLIC ${bcrypt_BINARY_DIR})
+
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME}
         PRIVATE

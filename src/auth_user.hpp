@@ -3,6 +3,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <tl/expected.hpp>
 
 class User {
 	std::string id_;
@@ -27,6 +28,18 @@ public:
 struct UserDb {
 	static UserDb& get();
 
+	enum class eUserDbResult {
+		OK,
+		NOT_VALID,
+		NOT_FOUND
+	};
+
 	std::shared_ptr<User> getUser(const std::string& name);
+	tl::expected<User*,eUserDbResult> add_user(User& user);
+	eUserDbResult delete_user(const std::string& user_id);
+
+protected:
+	UserDb() = default;
+	virtual ~UserDb() = default;
 };
 #endif // #ifndef CROW_AUTH_USER_HPP

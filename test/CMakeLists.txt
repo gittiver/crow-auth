@@ -7,11 +7,13 @@ set(CMAKE_POLICY_WARNING_CMP0126 new)
 enable_testing()
 
 set(TEST_SRCS
+        auth_user_test.cpp
   unittest.cpp
-  user_auth_test.cpp
 )
 
 add_executable(unittest ${TEST_SRCS})
-target_link_libraries(unittest lib-crow-auth Catch2::Catch2WithMain)
+target_include_directories(unittest PRIVATE ../src ${bcrypt_SOURCE_DIR}/include)
+target_link_libraries(unittest lib-crow-auth bcrypt Catch2::Catch2WithMain)
+
 
 add_test(NAME unittest COMMAND unittest)
