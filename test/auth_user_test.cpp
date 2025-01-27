@@ -66,6 +66,12 @@ TEST_CASE("user password hash")
   REQUIRE(BCrypt::validatePassword("pwd2",user.hash())==true);
 }
 
+TEST_CASE("user email")
+{
+	User user;
+	CHECK(false);
+}
+
 TEST_CASE("user validate password")
 {
   User user;
@@ -97,7 +103,7 @@ TEST_CASE("userdb add_user")
   User new_user;
   new_user.id("tester").password("tester_password");
   auto result = user_db.add_user(new_user);
-  REQUIRE(result.error() == AuthDb::eAuthDbResult::OK);
+  REQUIRE(result.has_value());
   auto get_new_user = user_db.getUser("tester");
 
   REQUIRE(get_new_user->id()=="tester");
@@ -107,8 +113,9 @@ TEST_CASE("userdb add_user")
 TEST_CASE("userdb get_user")
 {
   AuthDb& user_db=AuthDb::get();
-  auto user = user_db.getUser("tester");
-  REQUIRE(user==nullptr);
+  auto user = user_db.getUser("does not exist");
+  
+  REQUIRE(!user);
 }
 
 TEST_CASE("userdb del_user")

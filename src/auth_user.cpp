@@ -21,16 +21,20 @@ AuthDb& AuthDb::get()
 
 std::shared_ptr<User> AuthDb::getUser(const std::string& name)
 {
-	// TODO create useful user object	
-	return std::shared_ptr<User>();
+	auto result = std::find_if(users.begin(), users.end(), [&name](auto user) -> bool {return user->id() == name; });
+	return (result == users.end()) ? nullptr : *result;
 }
 
-tl::expected<User*,AuthDb::eAuthDbResult> AuthDb::add_user(User& user) {
-	return tl::make_unexpected(AuthDb::eAuthDbResult::NOT_VALID);
+tl::expected<std::shared_ptr<User>,AuthDb::eAuthDbResult> AuthDb::add_user(User& user) {
+	std::shared_ptr<User> nuser = std::make_shared<User>(user);
+	// TBD check unique names
+	users.emplace_back(nuser);
+	return nuser;
 }
 
 AuthDb::eAuthDbResult AuthDb::delete_user(const std::string& user_id) {
-	return AuthDb::eAuthDbResult::NOT_FOUND;
+	auto result = std::remove_if(users.begin(), users.end(), [&user_id](std::shared_ptr<User> user) -> bool { return user->id() == user_id; });
+	return (result != users.end()) ? AuthDb::eAuthDbResult::OK : AuthDb::eAuthDbResult::NOT_FOUND;
 }
 
 void AuthDb::init() {
