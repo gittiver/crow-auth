@@ -61,7 +61,7 @@ static bool validate_authentication(const crow::request &request,
 
 void LoginRequiredMiddleware::before_handle(crow::request &req,
                                             crow::response &res,
-                                            LoginRequiredMiddleware::context &ctx) const {
+                                            context &ctx) const {
   CROW_LOG_DEBUG << "check auth for " << req.url;
   if (!validate_authentication(req, res, p_auth_delegate.get())) {
     res.end();
@@ -70,6 +70,21 @@ void LoginRequiredMiddleware::before_handle(crow::request &req,
 
 
 void LoginRequiredMiddleware::after_handle(crow::request &/*req*/,
+                                           crow::response &/*res*/,
+                                           context &/*ctx*/) const {
+}
+
+void AdminRequiredMiddleware::before_handle(crow::request &req,
+                                            crow::response &res,
+                                            context &ctx) const {
+  CROW_LOG_DEBUG << "check auth for " << req.url;
+  if (!validate_authentication(req, res, p_auth_delegate.get())) {
+    res.end();
+  }
+}
+
+
+void AdminRequiredMiddleware::after_handle(crow::request &/*req*/,
                                            crow::response &/*res*/,
                                            context &/*ctx*/) const {
 }

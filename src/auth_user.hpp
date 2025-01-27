@@ -9,23 +9,38 @@
 #include "auth.hpp"
 
 class User {
-	std::string id_;
-	std::string salted_password_hash_;
+  std::string id_;
+  std::string salted_password_hash_;
+  std::string email_;
 
 public:
-	User() = default;
-	virtual ~User() = default;
+  User() = default;
 
-	const std::string& id() const { return this->id_; }
-	User& id(const std::string& id) { this->id_ = id; return *this; }
-	
-	User& password(const std::string& password);
+  User(const std::string &id, const std::string &password_, const std::string &email_ = "")
+    : id_(id)
+      , email_(email_) { password(password_); };
 
-	const std::string& hash() const {
-		return salted_password_hash_;
-	}
+  virtual ~User() = default;
 
-	bool validate_password(const std::string& password) const;
+  const std::string &id() const { return this->id_; }
+
+  User &id(const std::string &id) {
+    this->id_ = id;
+    return *this;
+  }
+
+  User & email(const std::string &email) {
+    this->email_ = email;
+    return *this;
+  }
+
+  User &password(const std::string &password);
+
+  const std::string &hash() const {
+    return salted_password_hash_;
+  }
+
+  bool validate_password(const std::string &password) const;
 };
 
 class Bearer {
@@ -39,21 +54,21 @@ public:
 };
 
 struct AuthDb {
-	static AuthDb& get();
+  static AuthDb &get();
 
-	enum class eAuthDbResult {
-		OK,
-		NOT_VALID,
-		NOT_FOUND
-	};
+  enum class eAuthDbResult {
+    OK,
+    NOT_VALID,
+    NOT_FOUND
+  };
 
 	std::shared_ptr<User> getUser(const std::string& name);
-	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> add_user(User& user);
+	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> add_user(const User& user);
 	eAuthDbResult delete_user(const std::string& user_id);
 
-	void init();
+  void init();
 
-	std::shared_ptr<Bearer> get_bearer(const std::string& name);
+  std::shared_ptr<Bearer> get_bearer(const std::string &name);
 
 protected:
 	AuthDb() = default;
@@ -64,18 +79,21 @@ private:
 };
 
 class AuthDbAuth : public IAuthenticate {
-	std::string connection_url_;
+  std::string connection_url_;
 
-	std::mutex mutex_;
+  std::mutex mutex_;
+
 public:
-	AuthDbAuth& connection(const std::string& connection_url)
-	{ this->connection_url_ = connection_url; return *this; }
+  AuthDbAuth &connection(const std::string &connection_url) {
+    this->connection_url_ = connection_url;
+    return *this;
+  }
 
-	void on_init() override { AuthDb::get().init();};
-	static AuthDb& user_db() { return AuthDb::get(); };
+  void on_init() override { AuthDb::get().init(); };
+  static AuthDb &user_db() { return AuthDb::get(); };
 
-	bool is_user_authenticated(const std::string &username, const std::string &password) override;
+  bool is_user_authenticated(const std::string &username, const std::string &password) override;
 
-	bool is_bearer_authenticated(const std::string &bearer) override;
+  bool is_bearer_authenticated(const std::string &bearer) override;
 };
 #endif // #ifndef CROW_AUTH_USER_HPP

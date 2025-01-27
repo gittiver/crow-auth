@@ -16,7 +16,14 @@ static crow::json::wvalue error2json(const std::string &errstring) {
 int main() {
   crow::App<LoginRequiredMiddleware> app;
 
-  app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::make_unique<AuthDbAuth>();
+  std::unique_ptr<AuthDbAuth> auth = std::make_unique<AuthDbAuth>();
+  auth->connection("file://my_file.txt");
+
+  auth->user_db().add_user(User{"u1","u1_pw"});
+  auth->user_db().add_user(User{"u2","u2_pw"});
+  auth->user_db().add_user(User{"u3","u3_pw"});
+
+  app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::move(auth);
 
   CROW_ROUTE(app, "/api/do_authenticated")
       .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
@@ -27,7 +34,7 @@ int main() {
             return crow::response(crow::status::OK);
           });
 
-  bp_user_registration user_registration(app);
+  bp_user_registration user_registration(app,auth->user_db());
   app.register_blueprint(user_registration);
   app.port(18080).run();
 

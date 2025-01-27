@@ -24,9 +24,22 @@ private:
   { return true; };
 };
 
+class AdminAuth : public IAuthenticate {
+
+private:
+  void on_init() override {};
+  bool is_user_authenticated(const std::string &username,
+                             const std::string &password) override
+  { return username=="admin" && password=="admin"; }
+
+  bool is_bearer_authenticated(const std::string &bearer) override
+  { return false; };
+};
+
 int main() {
-  crow::App<LoginRequiredMiddleware> app;
+  crow::App<LoginRequiredMiddleware,AdminRequiredMiddleware> app;
   app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::make_unique<SimpleAuth>();
+  app.get_middleware<AdminRequiredMiddleware>().p_auth_delegate = std::make_unique<AdminAuth>();
 
   CROW_ROUTE(app, "/api/do_authenticated")
       .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
@@ -37,8 +50,16 @@ int main() {
             return crow::response(crow::status::OK);
           });
 
-  bp_user_registration user_registration(app);
-  app.register_blueprint(user_registration);
+  CROW_ROUTE(app, "/api/admin_only")
+        .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
+        .CROW_ADMIN_REQUIRED(app)
+            ([]() {
+
+              CROW_LOG_INFO << "admin authenticated";
+              return crow::response(crow::status::OK);
+            });
+
+
   app.port(18080).run();
 
 }

@@ -2,7 +2,18 @@
 GET http://0.0.0.0:18080/api/do_authenticated
 
 ### GET request to example server
-GET http://0.0.0.0:18080/user/register
+GET http://0.0.0.0:18080/api/do_authenticated
+Authorization: Basic u1 u1_pw
+### GET request to example server
+GET http://0.0.0.0:18080/user/api/register
+
+### Post register user
+POST http://0.0.0.0:18080/user/api/register
+
+### Post register user
+POST http://0.0.0.0:18080/user/api/register
+
+{ "name" : "value", "password": "X", "email":"x@b.com" }
 
 ###
 GET http://0.0.0.0:18080/user/profile/1

@@ -38,6 +38,24 @@ struct LoginRequiredMiddleware :  crow::ILocalMiddleware {
 
 #define CROW_LOGIN_REQUIRED(app) CROW_MIDDLEWARES(app, LoginRequiredMiddleware)
 
+struct AdminRequiredMiddleware :  crow::ILocalMiddleware {
+  struct context {
+  };
+
+  AdminRequiredMiddleware(): p_auth_delegate() {};
+
+  virtual ~AdminRequiredMiddleware() = default;
+
+  void before_handle(crow::request &req, crow::response &res, context &ctx) const;
+
+  void after_handle(crow::request &req, crow::response &res, context &ctx) const;
+
+  std::unique_ptr<IAuthenticate> p_auth_delegate;
+};
+
+#define CROW_ADMIN_REQUIRED(app) CROW_MIDDLEWARES(app, AdminRequiredMiddleware)
+
+
 // End of Authentication utilities
 
 #endif //CROW_AUTH_HPP
