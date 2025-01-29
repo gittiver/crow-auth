@@ -34,6 +34,8 @@ public:
     return *this;
   }
 
+  const std::string& email() const { return this->email_; }
+
   User &password(const std::string &password);
 
   const std::string &hash() const {

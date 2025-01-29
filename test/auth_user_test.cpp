@@ -35,6 +35,7 @@ TEST_CASE("user create")
 	User user;
 	REQUIRE(user.id().empty());
 	REQUIRE(user.hash().empty());
+	REQUIRE(user.email().empty());
 
 	REQUIRE(user.validate_password("") == false);
 	REQUIRE(user.validate_password("x") == false);
@@ -69,7 +70,9 @@ TEST_CASE("user password hash")
 TEST_CASE("user email")
 {
 	User user;
-	CHECK(false);
+
+	user.email("x@y.com");
+	REQUIRE(user.email()=="x@y.com");
 }
 
 TEST_CASE("user validate password")
@@ -101,13 +104,14 @@ TEST_CASE("userdb add_user")
 {
 	AuthDb& user_db = AuthDb::get();
 	User new_user;
-	new_user.id("tester").password("tester_password");
-	auto result = user_db.add_user(new_user);
-	REQUIRE(result.has_value());
-	auto get_new_user = user_db.getUser("tester");
+	new_user.id("tester").password("tester_password").email("x@y.com");
 
-	REQUIRE(get_new_user->id() == "tester");
-	REQUIRE(get_new_user->validate_password("tester_password"));
+	auto result = user_db.add_user(new_user);
+	
+	REQUIRE(result.has_value());
+	REQUIRE(result.value()->id() == "tester");
+	REQUIRE(result.value()->validate_password("tester_password"));
+	REQUIRE(result.value()->email() == "x@y.com");
 }
 
 TEST_CASE("userdb get_user")
@@ -140,10 +144,11 @@ TEST_CASE("userdb validate user(name)")
 	User new_user;
 	auto result = user_db.delete_user("tester");
 
-	new_user.id("tester").password("tester_password");
+	new_user.id("tester").password("tester_password").email("x@y.com");
 	auto a1 =  user_db.add_user(new_user);
-	REQUIRE(a1.error() == AuthDb::eAuthDbResult::OK);
-
+	REQUIRE(a1.has_value());
+	REQUIRE(a1.value()->id()=="tester");
+	
 	auto a2 = user_db.add_user(new_user);
 	REQUIRE(a1.error() == AuthDb::eAuthDbResult::NOT_VALID);
 }
