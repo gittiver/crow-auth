@@ -56,7 +56,7 @@ public:
 };
 
 struct AuthDb {
-  static AuthDb &get();
+	static	std::unique_ptr<AuthDb> get(const std::string& connection);
 
   enum class eAuthDbResult {
     OK,
@@ -71,10 +71,10 @@ struct AuthDb {
   void init();
 
   std::shared_ptr<Bearer> get_bearer(const std::string &name);
+  virtual ~AuthDb() = default;
 
 protected:
 	AuthDb() = default;
-	virtual ~AuthDb() = default;
 private:
 	std::vector<std::shared_ptr<User>> users;
 	std::vector<Bearer> bearers;
@@ -85,14 +85,19 @@ class AuthDbAuth : public IAuthenticate {
 
   std::mutex mutex_;
 
+  std::unique_ptr<AuthDb> authDb;
+
 public:
   AuthDbAuth &connection(const std::string &connection_url) {
     this->connection_url_ = connection_url;
     return *this;
   }
 
-  void on_init() override { AuthDb::get().init(); };
-  static AuthDb &user_db() { return AuthDb::get(); };
+  void on_init() override 
+  { 
+	  authDb = AuthDb::get(connection_url_);  
+  }
+  const AuthDb* const user_db() { return authDb.get(); };
 
   bool is_user_authenticated(const std::string &username, const std::string &password) override;
 

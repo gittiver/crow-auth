@@ -13,9 +13,30 @@ bool User::validate_password(const std::string &password) const {
   return BCrypt::validatePassword(password, salted_password_hash_);
 }
 
-AuthDb &AuthDb::get() {
-  static AuthDb instance;
-  return instance;
+
+std::unique_ptr<AuthDb> AuthDb::get(const std::string& connection)
+{
+    std::string::size_type pos = connection.find("sqlite://");
+    if (pos==0) {
+        std::string::size_type pos2;
+        pos2 = connection.find(":memory:", strlen("sqlite://"));
+        if (pos2 == 0+ strlen("sqlite://")) {
+            puts("create in memory db connection");
+            
+        }
+        pos2 = connection.find("file:", pos);
+        if (pos2 == 0) {
+            puts("create file db connection");
+            // create db connection
+            
+        }
+
+
+         
+    }
+    
+    // if successful, return loaded userdb
+    return std::unique_ptr<AuthDb>();
 }
 
 std::shared_ptr<User> AuthDb::getUser(const std::string &name) {
@@ -60,7 +81,10 @@ std::shared_ptr<Bearer> AuthDb::get_bearer(const std::string &name) {
 
 bool AuthDbAuth::is_user_authenticated(const std::string &username, const std::string &password) {
   std::scoped_lock<std::mutex> lock{mutex_};
-  auto user = AuthDb::get().getUser(username);
+  if (!authDb) {
+      return false;
+  }
+  auto user = authDb->getUser(username);
   if (!user) {
     return false;
   } else {
@@ -70,6 +94,6 @@ bool AuthDbAuth::is_user_authenticated(const std::string &username, const std::s
 
 bool AuthDbAuth::is_bearer_authenticated(const std::string &name) {
   std::scoped_lock<std::mutex> lock{mutex_};
-  auto bearer = AuthDb::get().get_bearer(name);
+  auto bearer = authDb->get_bearer(name);
   return bearer != nullptr;
 }
