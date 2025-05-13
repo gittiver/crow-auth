@@ -13,30 +13,38 @@ bool User::validate_password(const std::string &password) const {
   return BCrypt::validatePassword(password, salted_password_hash_);
 }
 
+class SqliteAuthDb : public AuthDb {
+public:
+    SqliteAuthDb(const std::string& parameter) 
+    {
+        
+    }
+
+    ~SqliteAuthDb() = default;
+};
 
 std::unique_ptr<AuthDb> AuthDb::get(const std::string& connection)
 {
     std::string::size_type pos = connection.find("sqlite://");
-    if (pos==0) {
+    if (pos == 0) {
         std::string::size_type pos2;
         pos2 = connection.find(":memory:", strlen("sqlite://"));
-        if (pos2 == 0+ strlen("sqlite://")) {
+        if (pos2 == 0 + strlen("sqlite://")) {
             puts("create in memory db connection");
-            
-        }
-        pos2 = connection.find("file:", pos);
-        if (pos2 == 0) {
+            return std::make_unique<SqliteAuthDb>(connection.substr(pos2));
+        } 
+    } else {
+        pos = connection.find("file://", pos);
+        if (pos == 0) {
             puts("create file db connection");
             // create db connection
-            
+            /// TODO create DB subclass for storage file
         }
 
-
-         
     }
     
-    // if successful, return loaded userdb
-    return std::unique_ptr<AuthDb>();
+    // if not successfull return nullptr
+    return nullptr;
 }
 
 std::shared_ptr<User> AuthDb::getUser(const std::string &name) {

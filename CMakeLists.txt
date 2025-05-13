@@ -21,7 +21,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 option(CROW_AUTH_ENABLE_TESTS "enable testing" ON)
 
 CPMAddPackage(Crow
-  VERSION 1.2.0
+  VERSION 1.2.1.2
   GITHUB_REPOSITORY CrowCpp/Crow
   OPTIONS
   "CROW_BUILD_EXAMPLES Off"
@@ -43,11 +43,13 @@ CPMAddPackage(expected
 CPMAddPackage(bcrypt
   GIT_TAG master
   GITHUB_REPOSITORY trusch/libbcrypt
+  OPTIONS "BUILD_SHARED_LIBS Off"
 )
-message( "added ${CPM_LAST_PACKAGE_NAME}")
-message( "src=  ${bcrypt_SOURCE_DIR}")
+#message( "added ${CPM_LAST_PACKAGE_NAME}")
+#message( "src=  ${bcrypt_SOURCE_DIR}")
 
-add_library(lib-${PROJECT_NAME}
+# lib
+add_library(${PROJECT_NAME}
   src/bp_user_registration.cpp
   src/bp_user_registration.hpp
   src/auth.cpp
@@ -55,24 +57,26 @@ add_library(lib-${PROJECT_NAME}
   src/auth_user.hpp
   src/auth_user.cpp)
 target_include_directories(
-        lib-${PROJECT_NAME}
+        ${PROJECT_NAME}
         PUBLIC ${CMAKE_SOURCE_DIR}/src
         PRIVATE ${bcrypt_SOURCE_DIR}/include)
-target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow bcrypt)
-target_link_directories(lib-${PROJECT_NAME} PUBLIC ${bcrypt_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC tl::expected Crow::Crow bcrypt)
+target_link_directories(${PROJECT_NAME} PUBLIC ${bcrypt_BINARY_DIR})
 
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME}
+# main executable
+add_executable(${PROJECT_NAME}_main src/main.cpp)
+target_link_libraries(${PROJECT_NAME}_main
         PRIVATE
-        lib-${PROJECT_NAME}
+        ${PROJECT_NAME}
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${expected_SOURCE_DIR}/include)
-target_link_directories(${PROJECT_NAME} PRIVATE ${bcrypt_BINARY_DIR})
+target_include_directories(${PROJECT_NAME}_main PRIVATE ${expected_SOURCE_DIR}/include)
+target_link_directories(${PROJECT_NAME}_main PRIVATE ${bcrypt_BINARY_DIR})
 
+# auth db example
 add_executable(example_auth_db src/example_auth_db.cpp)
 target_link_libraries(example_auth_db
         PRIVATE
-        lib-${PROJECT_NAME}
+        ${PROJECT_NAME}
 )
 target_include_directories(example_auth_db PRIVATE ${expected_SOURCE_DIR}/include)
 target_link_directories(example_auth_db PRIVATE ${bcrypt_BINARY_DIR})
@@ -83,7 +87,7 @@ if(${CROW_AUTH_ENABLE_TESTS})
   enable_testing()
 
   CPMAddPackage(Catch2
-    VERSION 3.7.0
+    VERSION 3.8.1
     GITHUB_REPOSITORY catchorg/Catch2
     OPTIONS
     "CATCH_INSTALL_DOCS Off"

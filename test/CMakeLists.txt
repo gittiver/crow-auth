@@ -13,7 +13,7 @@ set(TEST_SRCS
 
 add_executable(unittest ${TEST_SRCS})
 target_include_directories(unittest PRIVATE ../src ${bcrypt_SOURCE_DIR}/include)
-target_link_libraries(unittest lib-crow-auth bcrypt Catch2::Catch2WithMain)
+target_link_libraries(unittest crow-auth bcrypt Catch2::Catch2WithMain)
 
 
 add_test(NAME unittest COMMAND unittest)

@@ -89,7 +89,10 @@ class AuthDbAuth : public IAuthenticate {
 
 public:
   AuthDbAuth &connection(const std::string &connection_url) {
-    this->connection_url_ = connection_url;
+	if (this->connection_url_ != connection_url) {
+		this->connection_url_ = connection_url;
+		on_init();
+	}
     return *this;
   }
 
@@ -97,7 +100,8 @@ public:
   { 
 	  authDb = AuthDb::get(connection_url_);  
   }
-  const AuthDb* const user_db() { return authDb.get(); };
+  
+  AuthDb* user_db() { return authDb.get(); }
 
   bool is_user_authenticated(const std::string &username, const std::string &password) override;
 

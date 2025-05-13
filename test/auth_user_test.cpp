@@ -117,7 +117,7 @@ TEST_CASE("userdb add_user")
 
 TEST_CASE("userdb get_user")
 {
-	auto user_db = AuthDb::get("");
+	auto user_db = AuthDb::get("sqlite://:memory:");
 	REQUIRE(user_db);
 	auto user = user_db->getUser("does not exist");
 
@@ -126,7 +126,7 @@ TEST_CASE("userdb get_user")
 
 TEST_CASE("userdb del_user")
 {
-	auto user_db = AuthDb::get("");
+	auto user_db = AuthDb::get("sqlite://:memory:");
 	REQUIRE(user_db);
 	User new_user;
 	new_user.id("tester").password("tester_password");
@@ -143,7 +143,7 @@ TEST_CASE("userdb del_user")
 
 TEST_CASE("userdb validate user(name)")
 {
-	auto user_db = AuthDb::get("");
+	auto user_db = AuthDb::get("sqlite://:memory:");
 	REQUIRE(user_db);
 	User new_user;
 	auto result = user_db->delete_user("tester");

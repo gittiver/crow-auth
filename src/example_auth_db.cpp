@@ -17,11 +17,11 @@ int main() {
   crow::App<LoginRequiredMiddleware> app;
 
   std::unique_ptr<AuthDbAuth> auth = std::make_unique<AuthDbAuth>();
-  auth->connection("file://my_file.txt");
-
-  auth->user_db().add_user(User{"u1","u1_pw"});
-  auth->user_db().add_user(User{"u2","u2_pw"});
-  auth->user_db().add_user(User{"u3","u3_pw"});
+  auth->connection("");//"file://my_file.txt");
+  auto userDB = auth->user_db();
+  userDB->add_user(User{ "u1","u1_pw" });
+  userDB->add_user(User{"u2","u2_pw"});
+  userDB->add_user(User{"u3","u3_pw"});
 
   app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::move(auth);
 
@@ -34,7 +34,7 @@ int main() {
             return crow::response(crow::status::OK);
           });
 
-  bp_user_registration user_registration(app,auth->user_db());
+  bp_user_registration user_registration(app,*userDB);
   app.register_blueprint(user_registration);
   app.port(18080).run();
 
