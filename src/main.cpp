@@ -56,7 +56,8 @@ int main() {
             ([]() {
 
               CROW_LOG_INFO << "admin authenticated";
-              return crow::response(crow::status::OK);
+
+              return crow::response(crow::status::OK,"Sesam opened.");
             });
 
 
