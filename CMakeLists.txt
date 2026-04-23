@@ -8,7 +8,7 @@ if (POLICY CMP0126)
     cmake_policy(SET CMP0126 NEW)
 endif ()
 
-project(crow-auth VERSION 0.0.1 LANGUAGES CXX)
+project(crow-auth VERSION 0.0.2 LANGUAGES CXX)
 
 enable_language(C)
 enable_language(CXX)
@@ -21,7 +21,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 option(CROW_AUTH_ENABLE_TESTS "enable testing" ON)
 
 CPMAddPackage(Crow
-  VERSION 1.2.0
+  VERSION 1.3.2
   GITHUB_REPOSITORY CrowCpp/Crow
   OPTIONS
   "CROW_BUILD_EXAMPLES Off"
@@ -42,10 +42,11 @@ CPMAddPackage(expected
 
 CPMAddPackage(bcrypt
   GIT_TAG master
-  GITHUB_REPOSITORY trusch/libbcrypt
+  GITHUB_REPOSITORY gittiver/libbcrypt
+  OPTIONS "BUILD_SHARED_LIBS Off"
 )
-message( "added ${CPM_LAST_PACKAGE_NAME}")
-message( "src=  ${bcrypt_SOURCE_DIR}")
+#message( "added ${CPM_LAST_PACKAGE_NAME}")
+#message( "src=  ${bcrypt_SOURCE_DIR}")
 
 add_library(lib-${PROJECT_NAME}
   src/bp_user_registration.cpp
@@ -83,7 +84,7 @@ if(${CROW_AUTH_ENABLE_TESTS})
   enable_testing()
 
   CPMAddPackage(Catch2
-    VERSION 3.7.0
+    VERSION 3.14.0
     GITHUB_REPOSITORY catchorg/Catch2
     OPTIONS
     "CATCH_INSTALL_DOCS Off"
