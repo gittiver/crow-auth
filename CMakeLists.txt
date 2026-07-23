@@ -21,7 +21,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
 option(CROW_AUTH_ENABLE_TESTS "enable testing" ON)
 
 CPMAddPackage(Crow
-  VERSION 1.2.1.2
+  VERSION 1.3.3
   GITHUB_REPOSITORY CrowCpp/Crow
   OPTIONS
   "CROW_BUILD_EXAMPLES Off"
@@ -34,7 +34,7 @@ CPMAddPackage(Crow
 
 # add tartan lamas expected library
 CPMAddPackage(expected
-  VERSION 1.1.0
+  VERSION 1.3.1
   GITHUB_REPOSITORY TartanLlama/expected
   OPTIONS
   "EXPECTED_BUILD_TESTS Off"
@@ -69,7 +69,7 @@ target_link_libraries(${PROJECT_NAME}_main
         PRIVATE
         ${PROJECT_NAME}
 )
-target_include_directories(${PROJECT_NAME}_main PRIVATE ${expected_SOURCE_DIR}/include)
+Target_include_directories(${PROJECT_NAME}_main PRIVATE ${expected_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME}_main PRIVATE ${bcrypt_BINARY_DIR})
 
 # auth db example
@@ -87,7 +87,7 @@ if(${CROW_AUTH_ENABLE_TESTS})
   enable_testing()
 
   CPMAddPackage(Catch2
-    VERSION 3.8.1
+    VERSION 3.15.2
     GITHUB_REPOSITORY catchorg/Catch2
     OPTIONS
     "CATCH_INSTALL_DOCS Off"
