@@ -150,11 +150,12 @@ TEST_CASE("userdb validate user(name)")
 
 	new_user.id("tester").password("tester_password").email("x@y.com");
 	auto a1 =  user_db->add_user(new_user);
-	REQUIRE(a1.has_value());
-	REQUIRE(a1.value()->id()=="tester");
+	REQUIRE(a1.has_value()==true);
+	if (a1.has_value()==true) {
+		REQUIRE(a1.value()->id()=="tester");
 
-	REQUIRE(user_db);
-	auto a2 = user_db->add_user(new_user);
-	REQUIRE(a1.error() == AuthDb::eAuthDbResult::NOT_VALID);
+		auto a2 = user_db->add_user(new_user);
+		REQUIRE(a1.error() == AuthDb::eAuthDbResult::NOT_VALID);
+	}
 }
 
