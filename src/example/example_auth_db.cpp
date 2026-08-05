@@ -19,9 +19,9 @@ int main() {
   std::unique_ptr<AuthDbAuth> auth = std::make_unique<AuthDbAuth>();
   auth->connection("file://my_file.txt");
 
-  auth->user_db().add_user(User{"u1","u1_pw"});
-  auth->user_db().add_user(User{"u2","u2_pw"});
-  auth->user_db().add_user(User{"u3","u3_pw"});
+  auth->user_db().register_user(User{"u1","u1_pw"});
+  auth->user_db().register_user(User{"u2","u2_pw"});
+  auth->user_db().register_user(User{"u3","u3_pw"});
 
   app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::move(auth);
 

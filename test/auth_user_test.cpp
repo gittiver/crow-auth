@@ -100,13 +100,13 @@ TEST_CASE("userdb create")
 	AuthDb& user_db = AuthDb::get();
 }
 
-TEST_CASE("userdb add_user")
+TEST_CASE("userdb register_user")
 {
 	AuthDb& user_db = AuthDb::get();
 	User new_user;
 	new_user.id("tester").password("tester_password").email("x@y.com");
 
-	auto result = user_db.add_user(new_user);
+	auto result = user_db.register_user(new_user);
 	
 	REQUIRE(result.has_value());
 	REQUIRE(result.value()->id() == "tester");
@@ -127,7 +127,7 @@ TEST_CASE("userdb del_user")
 	AuthDb& user_db = AuthDb::get();
 	User new_user;
 	new_user.id("tester").password("tester_password");
-	user_db.add_user(new_user);
+	user_db.register_user(new_user);
 
 	// bas case: delete not existing
 	auto result = user_db.delete_user("not_existing");
@@ -145,11 +145,11 @@ TEST_CASE("userdb validate user(name)")
 	auto result = user_db.delete_user("tester");
 
 	new_user.id("tester").password("tester_password").email("x@y.com");
-	auto a1 =  user_db.add_user(new_user);
+	auto a1 =  user_db.register_user(new_user);
 	REQUIRE(a1.has_value());
 	REQUIRE(a1.value()->id()=="tester");
 	
-	auto a2 = user_db.add_user(new_user);
+	auto a2 = user_db.register_user(new_user);
 	REQUIRE(a1.error() == AuthDb::eAuthDbResult::NOT_VALID);
 }
 

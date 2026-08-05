@@ -62,7 +62,7 @@ target_include_directories(
 target_link_libraries(lib-${PROJECT_NAME} PUBLIC tl::expected Crow::Crow bcrypt)
 target_link_directories(lib-${PROJECT_NAME} PUBLIC ${bcrypt_BINARY_DIR})
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} "src/example/own_authenticate.cpp")
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         lib-${PROJECT_NAME}
@@ -70,7 +70,7 @@ target_link_libraries(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${expected_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${bcrypt_BINARY_DIR})
 
-add_executable(example_auth_db src/example_auth_db.cpp)
+add_executable(example_auth_db "src/example/example_auth_db.cpp")
 target_link_libraries(example_auth_db
         PRIVATE
         lib-${PROJECT_NAME}

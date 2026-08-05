@@ -55,7 +55,7 @@ CROW_BP_ROUTE((*this), "/api/register")
             .password(user_registration->password)
             .email(user_registration->email);
 
-            auto added = authDb.add_user(u);
+            auto added = authDb.register_user(u);
             if (!added) {
                return crow::status::INTERNAL_SERVER_ERROR;
             } else {
@@ -66,32 +66,28 @@ CROW_BP_ROUTE((*this), "/api/register")
         // ...
       });
 
-CROW_BP_ROUTE((*this), "/api/logout")
-  .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
-  ([]() {
-        // ...
-        return crow::response(crow::status::OK);
-      });
+CROW_BP_ROUTE((*this), "/api/verify-registration")
+.methods(crow::HTTPMethod::Post)
+([] {
+    // TODO
+    // TODO 
+    //request to https ://backend-host/api/v1/accounts/verify-registration/ via HTTP POST with following JSON payload:
 
+    //{
+    //    "user_id": "<user id>",
+    //        "timestamp" : "<timestamp>",
+    //        "signature" : "<signature>"
+    //}
+    return crow::response(crow::status::NOT_IMPLEMENTED);
 
-/*CROW_BP_ROUTE((*this), "/register")
-.methods(crow::HTTPMethod::Get)
-([]() {
-    // ...
-    return crow::response(crow::status::OK,"GET register_body");
     });
 
-CROW_BP_ROUTE((*this), "/register")
-.methods(crow::HTTPMethod::Post)
-      ([]() {
-        // ...
-        return crow::response(crow::status::OK);
-      });
 
-CROW_BP_ROUTE((*this), "/profile/<int>")
+CROW_BP_ROUTE((*this), "/api/user")
   .CROW_MIDDLEWARES(app,LoginRequiredMiddleware)
-  ([](int /*id#1#) {
+  ([] {
             //...
-            return crow::response(crow::status::OK);
-          });*/
+            return crow::response(crow::status::NOT_IMPLEMENTED);
+          });
 }
+

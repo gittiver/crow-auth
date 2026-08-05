@@ -41,6 +41,14 @@ int main() {
   app.get_middleware<LoginRequiredMiddleware>().p_auth_delegate = std::make_unique<SimpleAuth>();
   app.get_middleware<AdminRequiredMiddleware>().p_auth_delegate = std::make_unique<AdminAuth>();
 
+  CROW_ROUTE(app, "/api/do")
+      .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
+      ([]() {
+
+      CROW_LOG_INFO << "do - no auth needed";
+      return crow::response(crow::status::OK);
+          });
+
   CROW_ROUTE(app, "/api/do_authenticated")
       .methods(crow::HTTPMethod::Post, crow::HTTPMethod::Get)
       .CROW_LOGIN_REQUIRED(app)

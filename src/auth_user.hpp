@@ -65,7 +65,7 @@ struct AuthDb {
   };
 
 	std::shared_ptr<User> getUser(const std::string& name);
-	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> add_user(const User& user);
+	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> register_user(const User& user);
 	eAuthDbResult delete_user(const std::string& user_id);
 
   void init();

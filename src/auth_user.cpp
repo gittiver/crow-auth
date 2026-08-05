@@ -24,7 +24,7 @@ std::shared_ptr<User> AuthDb::getUser(const std::string &name) {
   return (result == users.end()) ? nullptr : *result;
 }
 
-tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> AuthDb::add_user(const User &user) {
+tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> AuthDb::register_user(const User &user) {
     // check unique names first 
     std::string name = user.id();
   const auto result = std::find_if(users.begin(), users.end(),
