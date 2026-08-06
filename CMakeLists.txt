@@ -76,7 +76,20 @@ target_link_libraries(example_auth_db
         lib-${PROJECT_NAME}
 )
 target_include_directories(example_auth_db PRIVATE ${expected_SOURCE_DIR}/include)
-target_link_directories(example_auth_db PRIVATE ${bcrypt_BINARY_DIR})
+
+add_custom_target(resources ALL)
+add_custom_command(
+        TARGET resources POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+                ${CMAKE_SOURCE_DIR}/src/static
+                ${CMAKE_CURRENT_BINARY_DIR}/static)
+
+add_custom_command(
+        TARGET resources POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+                ${CMAKE_SOURCE_DIR}/src/templates
+                ${CMAKE_CURRENT_BINARY_DIR}/templates)
+
 
 include(CTest)
 if(${CROW_AUTH_ENABLE_TESTS})
