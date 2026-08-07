@@ -26,7 +26,7 @@ struct bp_user_registration : crow::Blueprint {
 	bp_user_registration& registration_flow_enable(const bool enable_register_flow);
 	bool is_registration_flow_enabled() const;
 
-	bp_user_registration& register_verification_enable(const bool enable_register_flow);
+	bp_user_registration& register_verification_enable(const bool enable_verification);
 	bool is_register_verification_enabled() const;
 
 	std::mutex authdb_mutex;

@@ -12,13 +12,19 @@ class User {
   std::string id_;
   std::string salted_password_hash_;
   std::string email_;
-
+  bool verified_{false};
+  std::string verification_token_;
 public:
   User() = default;
 
-  User(const std::string &id, const std::string &password_, const std::string &email_ = "")
+  User(const std::string &id, 
+	  const std::string &password_, 
+	  const std::string &email_ = "", 
+	  const bool verified = false)
     : id_(id)
-      , email_(email_) { password(password_); };
+    , email_(email_)
+	, verified_(verified)
+  { password(password_); };
 
   virtual ~User() = default;
 
@@ -35,6 +41,21 @@ public:
   }
 
   const std::string& email() const { return this->email_; }
+
+  User& verified(bool verified) {
+	  this->verified_ = verified;
+	  return *this;
+  }
+  bool verified() const { return verified_;  }
+
+  User& verification_token(const std::string& token) {
+	  this->verification_token_ = token;
+	  return *this;
+  }
+
+  const std::string& verification_token() const {
+	  return this->verification_token_;
+  }
 
   User &password(const std::string &password);
 
@@ -65,9 +86,11 @@ struct AuthDb {
   };
 
 	std::shared_ptr<User> getUser(const std::string& name);
-	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> register_user(const User& user);
-	eAuthDbResult delete_user(const std::string& user_id);
+	tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> register_user(const User& user,bool verified = false);
+	void verify_token(const std::string & token, const std::string& email, const std::chrono::time_point<std::chrono::system_clock>& timestamp);
 
+	eAuthDbResult delete_user(const std::string& user_id);
+	void store(const User& user);
   void init();
 
   std::shared_ptr<Bearer> get_bearer(const std::string &name);

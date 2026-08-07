@@ -18,6 +18,7 @@ struct user_register {
   std::string name;
   std::string email;
   std::string password;
+  bool activated{false};
 
   enum class eError { eOk, eFail};
 
@@ -29,9 +30,6 @@ struct user_register {
       
       res.password = to_string(body_params.get("password"));
       
-
-
-
       if (res.name.empty()|| res.email.empty() || res.password.empty()) {
           return tl::unexpected<eError>(eError::eFail);
       } else {
@@ -50,9 +48,6 @@ struct user_register {
     }
   }
 };
-
-
-
 
 bp_user_registration::bp_user_registration(const crow::App<LoginRequiredMiddleware>& app, AuthDb& authDb)
     : crow::Blueprint("user") {
@@ -88,8 +83,8 @@ CROW_BP_ROUTE((*this), "/api/register")
             else {
                 User u;
                 u.id(user_registration->name)
-                    .password(user_registration->password)
-                    .email(user_registration->email);
+                 .password(user_registration->password)
+                 .email(user_registration->email);
 
                 auto added = authDb.register_user(u);
                 if (!added) {
@@ -105,10 +100,8 @@ CROW_BP_ROUTE((*this), "/api/register")
   });
 
 CROW_BP_ROUTE((*this), "/api/verify-registration")
-.methods(crow::HTTPMethod::Post)
-([] {
-    // TODO
-    // TODO 
+.methods(crow::HTTPMethod::Get)
+([&authDb](crow::request& request) {
     //request to https ://backend-host/api/v1/accounts/verify-registration/ via HTTP POST with following JSON payload:
 
     //{
@@ -116,9 +109,20 @@ CROW_BP_ROUTE((*this), "/api/verify-registration")
     //        "timestamp" : "<timestamp>",
     //        "signature" : "<signature>"
     //}
-    return crow::response(crow::status::NOT_IMPLEMENTED);
+    crow::response response;
 
-    });
+    auto token = request.url_params.get("token");
+    auto email = request.url_params.get("email");
+    if (token == nullptr) {
+        response.code = crow::status::BAD_REQUEST;
+    }
+    else {
+        auto timestamp = std::chrono::system_clock::now();
+        authDb.verify_token(token,email,timestamp);
+        response.code = crow::status::OK;
+    }
+    return response;
+});
 
 
 CROW_BP_ROUTE((*this), "/api/user")
@@ -150,9 +154,9 @@ bool bp_user_registration::is_registration_flow_enabled() const
     return settings.register_verification_enabled;
 }
 
-bp_user_registration& bp_user_registration::register_verification_enable(const bool enable_register_flow)
+bp_user_registration& bp_user_registration::register_verification_enable(const bool enable_verification)
 {
-    settings.registration_flow_enabled = enable_register_flow;
+    settings.registration_flow_enabled = enable_verification;
     return *this;
 }
 

@@ -36,6 +36,7 @@ TEST_CASE("user create")
 	REQUIRE(user.id().empty());
 	REQUIRE(user.hash().empty());
 	REQUIRE(user.email().empty());
+	REQUIRE(user.verified()==false);
 
 	REQUIRE(user.validate_password("") == false);
 	REQUIRE(user.validate_password("x") == false);
@@ -112,6 +113,8 @@ TEST_CASE("userdb register_user")
 	REQUIRE(result.value()->id() == "tester");
 	REQUIRE(result.value()->validate_password("tester_password"));
 	REQUIRE(result.value()->email() == "x@y.com");
+	REQUIRE(!result.value()->verified());
+	REQUIRE(!result.value()->verification_token().empty());
 }
 
 TEST_CASE("userdb get_user")
