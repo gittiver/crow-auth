@@ -34,7 +34,11 @@ tl::expected<std::shared_ptr<User>, AuthDb::eAuthDbResult> AuthDb::register_user
 		return tl::unexpected(AuthDb::eAuthDbResult::NOT_VALID);
 	}
 	else {
+
+
 		std::shared_ptr<User> nuser = std::make_shared<User>(user);
+		/// TODO replace token by cryptographical safe generated one
+		nuser->verification_token("abc");
 		users.emplace_back(nuser);
 		this->store(user);
 		return nuser;
@@ -57,7 +61,11 @@ AuthDb::eAuthDbResult AuthDb::delete_user(const std::string& user_id) {
 	auto result = std::remove_if(users.begin(),
 		users.end(),
 		[&user_id](std::shared_ptr<User> user) -> bool { return user->id() == user_id; });
-	return (result != users.end()) ? AuthDb::eAuthDbResult::OK : AuthDb::eAuthDbResult::NOT_FOUND;
+	if (result != users.end()) {
+		users.erase(result);
+		return AuthDb::eAuthDbResult::OK;
+	}
+	return AuthDb::eAuthDbResult::NOT_FOUND;
 }
 
 void AuthDb::store(const User& user)

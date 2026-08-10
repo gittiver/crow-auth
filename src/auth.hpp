@@ -5,6 +5,7 @@
 #ifndef CROW_AUTH_HPP
 #define CROW_AUTH_HPP
 
+#include <crow/app.h>
 #include <crow/middleware.h>
 #include <crow/http_response.h>
 
