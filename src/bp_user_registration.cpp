@@ -101,7 +101,7 @@ CROW_BP_ROUTE((*this), "/api/register")
 
 CROW_BP_ROUTE((*this), "/api/verify-registration")
 .methods(crow::HTTPMethod::Get)
-([&authDb](crow::request& request) {
+([&authDb](const crow::request& request) {
     //request to https ://backend-host/api/v1/accounts/verify-registration/ via HTTP POST with following JSON payload:
 
     //{
