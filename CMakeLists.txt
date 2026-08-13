@@ -42,7 +42,7 @@ CPMAddPackage(expected
 
 CPMAddPackage(bcrypt
   GIT_TAG master
-  GITHUB_REPOSITORY gittiver/libbcrypt
+  GITHUB_REPOSITORY trusch/libbcrypt
   OPTIONS "BUILD_SHARED_LIBS Off"
 )
 #message( "added ${CPM_LAST_PACKAGE_NAME}")
